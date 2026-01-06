@@ -3,7 +3,7 @@
 Simulador de status "Jogando Grand Theft Auto VI" para Discord. 
 Este projeto permite exibir uma presença rica customizada no seu perfil, alternando entre estados como "Explorando Vice City" ou "Em Missão".
 
-![Preview](https://via.placeholder.com/600x200?text=Exemplo+Rich+Presence+GTA+VI)
+![Preview](assets/img/gta6_discord_pc.png)
 
 ## 🚀 Funcionalidades
 
