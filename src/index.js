@@ -1,18 +1,31 @@
 const RPC = require('discord-rpc');
 const config = require('./config');
+const readline = require('readline');
 
-// Verificação de Segurança
+function esperarParaFechar() {
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+  });
+
+  console.log('\n--------------------------------------------------');
+  rl.question('Pressione [ENTER] para fechar esta janela...', () => {
+    rl.close();
+    process.exit(1);
+  });
+}
+
 if (!config.clientId) {
-  console.error('\x1b[31m%s\x1b[0m', '[ERRO] CLIENT_ID não encontrado!');
-  console.error('Certifique-se de ter criado o arquivo .env com seu ID.');
-  process.exit(1);
+  console.error('\x1b[31m%s\x1b[0m', '[ERRO CRÍTICO] Client ID não encontrado!');
+  console.error('Verifique o arquivo src/config.js e insira seu ID.');
+  esperarParaFechar();
+  return;
 }
 
 const client = new RPC.Client({ transport: 'ipc' });
 const startTimestamp = new Date();
 let activityIndex = 0;
 
-// Função que define a atividade no Discord
 async function setActivity() {
   if (!client || !client.user) return;
 
@@ -36,31 +49,30 @@ async function setActivity() {
       ]
     });
 
-    console.log(`[RPC] Atualizado: ${activity.details} | ${activity.state}`);
+    console.log(`[RPC] Status Atualizado: ${activity.details} | ${activity.state}`);
   } catch (error) {
-    console.error('[RPC] Erro ao atualizar:', error);
+    console.error('[RPC] Erro ao atualizar status:', error);
   }
 
-  // Passa para a próxima atividade da lista
   activityIndex = (activityIndex + 1) % config.activities.length;
 }
 
 client.on('ready', () => {
   console.log('--------------------------------------------------');
-  console.log(`✅ Conectado ao Discord como: ${client.user.username}`);
+  console.log(`✅ SUCESSO! Conectado como: ${client.user.username}`);
+  console.log('   Minimize esta janela para continuar mostrando o status.');
   console.log('--------------------------------------------------');
   
   setActivity();
 
-  // Loop de atualização
   setInterval(() => {
     setActivity();
   }, config.updateInterval);
 });
 
-// Tratamento de desconexão (ex: fechou o Discord)
 client.on('disconnected', () => {
-    console.log('[RPC] Desconectado! Tentando reconectar em 10s...');
+    console.log('[RPC] Desconectado! O Discord foi fechado?');
+    console.log('Tentando reconectar em 10 segundos...');
     setTimeout(() => login(), 10000);
 });
 
@@ -68,10 +80,14 @@ async function login() {
     try {
         await client.login({ clientId: config.clientId });
     } catch (err) {
-        console.error('[RPC] Aguardando Discord iniciar...');
+        console.error('\n[ERRO] Não foi possível conectar ao Discord.');
+        console.error('MOTIVO:', err.message);
+        console.log('DICA: O aplicativo do Discord está aberto neste PC?');
+        
         setTimeout(login, 15000); 
     }
 }
 
-// Inicia o processo
+console.log('Iniciando Project Vice...');
+console.log('Procurando Discord...');
 login();
