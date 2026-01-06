@@ -1,0 +1,32 @@
+{
+  "name": "gta6-rpc",
+  "version": "1.0.0",
+  "description": "Discord Rich Presence Simulator for GTA VI",
+  "main": "src/index.js",
+  "bin": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "test": "echo \"Error: no test specified\" && exit 0",
+    "build": "pkg . --targets node18-win-x64 --output build/GTAVI-RPC.exe"
+  },
+  "keywords": [
+    "discord",
+    "rpc",
+    "gta6"
+  ],
+  "author": "Seu Nome",
+  "license": "MIT",
+  "dependencies": {
+    "discord-rpc": "^4.0.1",
+    "dotenv": "^16.3.1"
+  },
+  "devDependencies": {
+    "pkg": "^5.8.1"
+  },
+  "pkg": {
+    "assets": [
+      "src/**/*",
+      ".env"
+    ]
+  }
+}
